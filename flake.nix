@@ -16,12 +16,6 @@
       version = "v0.1.5";
 
       src = ./.;
-      # src = pkgs.fetchFromGitHub {
-      #   owner = "DreamMaoMao";
-      #   repo = "maomaowm";
-      #   rev = "0.1.5";
-      #   hash = "sha256-YhEIZptEYa03jRlG3v/Hv7ULh905quws/qZ9vFR3coE=";
-      # };
 
       patches = [
         (pkgs.writeText "fix.diff" /* diff */
@@ -50,7 +44,7 @@ index eeec918..a73139b 100644
       buildInputs = with pkgs; [
         wlroots_0_17
         wayland
-        wayland-protocols
+        wayland-protocols 
         wayland-scanner
         xorg.libxcb.dev
         xorg.xcbutilwm
@@ -72,12 +66,28 @@ index eeec918..a73139b 100644
     in
     {
       options = {
-        programs.maomao.enable = mkEnableOption "test";
+        programs.maomao = {
+          enable = mkEnableOption ''
+            maomaowm is a wayland compositor based on dwl(0.5) , adding many
+            operation that supported in hyprland and a hyprland-like keybinds,
+            niri-like scroll layout and sway-like scratchpad. See below for
+            more features.
+          '';
+
+          configFile = mkOption {
+            default = ./config.conf;
+            type = with types; nullOr path;
+            description = ''
+              The fallback configuration to use at /etc/maomao/config.conf
+              '';
+          };
+
+        };
       };
 
       config = mkIf cfg.enable {
         environment = {
-          etc."maomao/config.conf".source = ./config.conf;
+          etc."maomao/config.conf".source = cfg.configFile;
           systemPackages = [ self.packages.x86_64-linux.default ];
         };
       };
