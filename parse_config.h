@@ -63,9 +63,11 @@ typedef struct {
   char animation_fade_in;
   float zoom_initial_ratio;
   float fadein_begin_opacity;
+  float fadeout_begin_opacity;
   uint32_t animation_duration_move;
   uint32_t animation_duration_open;
   uint32_t animation_duration_tag;
+  uint32_t animation_duration_close;
   double animation_curve[4];
 
   int scroller_structs;
@@ -446,12 +448,16 @@ void parse_config_line(Config *config, const char *line) {
     config->zoom_initial_ratio = atof(value);
   } else if (strcmp(key, "fadein_begin_opacity") == 0) {
     config->fadein_begin_opacity = atof(value);
+  } else if (strcmp(key, "fadeout_begin_opacity") == 0) {
+    config->fadeout_begin_opacity = atof(value);
   } else if (strcmp(key, "animation_duration_move") == 0) {
     config->animation_duration_move = atoi(value);
   } else if (strcmp(key, "animation_duration_open") == 0) {
     config->animation_duration_open = atoi(value);
   } else if (strcmp(key, "animation_duration_tag") == 0) {
     config->animation_duration_tag = atoi(value);
+  } else if (strcmp(key, "animation_duration_close") == 0) {
+    config->animation_duration_close = atoi(value);
   } else if (strcmp(key, "animation_curve") == 0) {
     if (sscanf(value, "%lf,%lf,%lf,%lf", &config->animation_curve[0],
                &config->animation_curve[1], &config->animation_curve[2],
@@ -873,9 +879,11 @@ void override_config(void) {
   animation_fade_in = config.animation_fade_in;
   zoom_initial_ratio = config.zoom_initial_ratio;
   fadein_begin_opacity = config.fadein_begin_opacity;
+  fadeout_begin_opacity = config.fadeout_begin_opacity;
   animation_duration_move = config.animation_duration_move;
   animation_duration_open = config.animation_duration_open;
   animation_duration_tag = config.animation_duration_tag;
+  animation_duration_close = config.animation_duration_close;
 
   // 复制数组类型的变量
   memcpy(animation_curve, config.animation_curve, sizeof(animation_curve));
@@ -923,10 +931,12 @@ void set_value_default() {
 config.animations = 1;             // 是否启用动画
 config.animation_fade_in = 1;     // Enable animation fade in
 config.zoom_initial_ratio = 0.5; // 动画起始窗口比例
-config.fadein_begin_opacity = 0; // Begin opac window ratio for animations
+config.fadein_begin_opacity = 0.5; // Begin opac window ratio for animations
+config.fadeout_begin_opacity = 0.5;
 config.animation_duration_move = 500;              // Animation move speed
 config.animation_duration_open = 400;              // Animation open speed
 config.animation_duration_tag = 300;               // Animation tag speed
+config.animation_duration_close = 300;               // Animation tag speed
 
 /* appearance */
 config.axis_bind_apply_timeout = 100; // 滚轮绑定动作的触发的时间间隔
